@@ -25,20 +25,20 @@ RSpec.describe 'CartItems API', type: :request, swagger: true do
         end
       end
 
-      response '422', 'invalid request' do
-        let(:cart_item) { { cart_id: cart.id, item_id: item.id, quantity: -1 } }
-
-        run_test!
-      end
-
-      response '422', 'invalid request' do
+      response '404', 'invalid request' do
         let(:cart_item) { { cart_id: 'invalid', item_id: item.id, quantity: 10 } }
 
         run_test!
       end
 
-      response '422', 'invalid request' do
+      response '404', 'invalid request' do
         let(:cart_item) { { cart_id: cart.id, item_id: 'invalid', quantity: 10 } }
+
+        run_test!
+      end
+
+      response '422', 'invalid request' do
+        let(:cart_item) { { cart_id: cart.id, item_id: item.id, quantity: -1 } }
 
         run_test!
       end
