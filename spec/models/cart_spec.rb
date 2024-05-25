@@ -11,7 +11,6 @@ RSpec.describe Cart, type: :model do
   end
 
   it 'is invalid with a negative total' do
-    binding.pry
     expect(build(:cart, total: -1)).to_not be_valid
   end
 end

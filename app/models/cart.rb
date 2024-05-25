@@ -8,7 +8,7 @@
 #  updated_at :datetime         not null
 #
 class Cart < ApplicationRecord
-  has_many :cart_items
+  has_many :cart_items, dependent: :destroy
   has_many :items, through: :cart_items
 
   validates :total, numericality: { equal_to: 0 }
@@ -17,8 +17,8 @@ class Cart < ApplicationRecord
   before_create :set_initial_total
 
   def update_total
-    cart_items.sum(&:subtotal)
-    save
+    total = cart_items.sum(:subtotal)
+    update_column(:total, total)
   end
 
   private

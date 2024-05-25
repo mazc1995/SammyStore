@@ -5,11 +5,12 @@ Rails.application.routes.draw do
   mount Rswag::Api::Engine => '/api-docs'
   mount Rswag::Ui::Engine => '/api-docs'
   resources :items
-  get 'cart_items/create'
-  get 'cart_items/update'
-  get 'cart/show'
-  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
-  get '/api/cart', controller: :cart, action: :show
-  post '/api/cart/items', controller: :cart_items, action: :add_cart_item
-  delete '/api/cart_item', controller: :cart_items, action: :destroy_cart_item
+
+  # Cart
+  get '/carts/:id', controller: :carts, action: :show
+
+  # CartItem
+  post '/cart_items', controller: :cart_items, action: :create
+  put '/cart_items/:id', controller: :cart_items, action: :update
+  delete '/cart_items/:id', controller: :cart_items, action: :destroy
 end

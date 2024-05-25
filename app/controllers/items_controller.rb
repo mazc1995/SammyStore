@@ -1,5 +1,5 @@
 class ItemsController < ApplicationController
-  before_action :set_item, only: %i[show update destroy]
+  before_action :find_item, only: %i[show update destroy]
 
   # GET /items
   def index
@@ -27,7 +27,7 @@ class ItemsController < ApplicationController
   # PATCH/PUT /items/1
   def update
     if @item.update(item_params)
-      render json: @item
+      render json: @item, status: :ok
     else
       render json: @item.errors, status: :unprocessable_entity
     end
@@ -35,17 +35,18 @@ class ItemsController < ApplicationController
 
   # DELETE /items/1
   def destroy
-    # @item.destroy
-    @item = Item.last
+    @item = find_item
     @item.destroy
-    render json: @item
+    render json: @item, status: :ok
   end
 
   private
 
   # Use callbacks to share common setup or constraints between actions.
-  def set_item
+  def find_item
     @item = Item.find(params[:id])
+  rescue StandardError => e
+    render json: { error: e.message }, status: :unprocessable_entity
   end
 
   # Only allow a list of trusted parameters through.

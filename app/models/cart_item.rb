@@ -16,4 +16,10 @@ class CartItem < ApplicationRecord
 
   validates :quantity, numericality: { greater_than: 0 }
   validates :subtotal, numericality: { greater_than_or_equal_to: 0 }
+
+  after_save :update_cart
+
+  def update_cart
+    cart.update_total
+  end
 end

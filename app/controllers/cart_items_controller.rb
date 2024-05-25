@@ -1,27 +1,35 @@
 class CartItemsController < ApplicationController
-  def add_cart_item
+  def create
     @item = find_item
     @cart = find_cart
-    @desired_quantity = params['desired_quantity'].to_i
+    @desired_quantity = params['quantity'].to_i
     validate_stock!
     validate_quantity!
-    @cart_item = find_or_create_cart_item
+    @cart_item = CartItem.create(cart: @cart, item: @item, quantity: @desired_quantity)
     update_cart_item
-    update_cart
-    render json: @cart, include: ['cart_items']
+    render json: @cart_item, status: :created
   rescue StandardError => e
     render json: { error: e.message }, status: :unprocessable_entity
   end
 
-  def destroy_cart_item
-    @item = find_item
-    @cart = find_cart
-    @cart_item = find_or_create_cart_item
-    @cart_item&.destroy
-    update_cart
-    render json: @cart, include: ['cart_items']
+  def update
+    @cart_item = find_cart_item
+    @item = @cart_item.item
+    @desired_quantity = params['quantity'].to_i
+    validate_stock!
+    validate_quantity!
+    update_cart_item
+    render json: @cart_item, status: :no_content
   rescue StandardError => e
-    render json: { error: e.message }, status: :unprocessable_entity
+    render json: { error: e.message }, status: :not_found
+  end
+
+  def destroy
+    @cart_item = find_cart_item
+    @cart_item.destroy
+    render json: @cart_item, status: :no_content
+  rescue StandardError => e
+    render json: { error: e.message }, status: :no_content
   end
 
   private
@@ -34,8 +42,8 @@ class CartItemsController < ApplicationController
     Cart.find(params['cart_id'])
   end
 
-  def find_or_create_cart_item
-    CartItem.find_or_create_by(item: @item, cart: @cart)
+  def find_cart_item
+    CartItem.find(params['id'])
   end
 
   def validate_stock!
