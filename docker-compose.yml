@@ -1,0 +1,27 @@
+# docker-compose.yml
+version: '3.3'
+services:
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: sammystore_development
+      POSTGRES_USER: sammystore
+      POSTGRES_PASSWORD: password
+
+  web:
+    build: .
+    command: bash -c "bundle exec rails db:create db:migrate db:seed && bundle exec rails s -b '0.0.0.0'"
+    volumes:
+      - .:/myapp
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://sammystore:password@db:5432/sammystore_development
+      RAILS_ENV: development
+
+volumes:
+  postgres_data:

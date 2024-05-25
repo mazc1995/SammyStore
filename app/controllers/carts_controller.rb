@@ -1,8 +1,13 @@
 class CartsController < ApplicationController
-  before_action :find_cart, only: %i[show]
+  before_action :find_cart, only: %i[show clear]
 
   def show
     render json: @cart, status: :ok
+  end
+
+  def clear
+    @cart.cart_items.destroy_all
+    render json: @cart, status: :no_content
   end
 
   private
