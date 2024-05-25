@@ -1,6 +1,9 @@
 require 'swagger_helper'
 
 RSpec.describe 'Carts API', type: :request, swagger: true do
+  let(:cart) { create(:cart) }
+  let(:id) { cart.id }
+
   path '/carts/{id}' do
     parameter name: :id, in: :path, type: :string, description: 'ID of the cart'
 
@@ -12,14 +15,11 @@ RSpec.describe 'Carts API', type: :request, swagger: true do
         schema type: :object,
                properties: {
                  id: { type: :integer },
-                 total: { type: :number }
+                 total: { type: :float }
                },
-               required: %w[id total]
-
-        let(:id) { create(:cart).id }
-
+               required: %w[id total created_at updated_at]
         run_test! do
-          expect(JSON.parse(response.body)['id']).to eq(id)
+          expect(JSON.parse(response.body)['id']).to eq(cart.id)
           expect(response).to have_http_status(:ok)
         end
       end

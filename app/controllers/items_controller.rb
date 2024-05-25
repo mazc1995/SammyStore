@@ -37,7 +37,7 @@ class ItemsController < ApplicationController
   def destroy
     @item = find_item
     @item.destroy
-    render json: @item, status: :ok
+    render json: @item, status: :no_content
   end
 
   private
@@ -46,7 +46,7 @@ class ItemsController < ApplicationController
   def find_item
     @item = Item.find(params[:id])
   rescue StandardError => e
-    render json: { error: e.message }, status: :unprocessable_entity
+    render json: { error: e.message }, status: :not_found
   end
 
   # Only allow a list of trusted parameters through.

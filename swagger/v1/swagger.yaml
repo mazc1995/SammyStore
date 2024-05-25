@@ -1,7 +1,7 @@
 ---
 openapi: 3.0.1
 info:
-  title: API V1
+  title: SammyStore
   version: v1
 paths:
   "/cart_items":
@@ -49,6 +49,8 @@ paths:
           description: cart_item updated
         '404':
           description: cart_item not found
+        '422':
+          description: invalid parameters
       requestBody:
         content:
           application/json:
@@ -91,10 +93,12 @@ paths:
                   id:
                     type: integer
                   total:
-                    type: number
+                    type: float
                 required:
                 - id
                 - total
+                - created_at
+                - updated_at
         '404':
           description: cart not found
   "/items":
