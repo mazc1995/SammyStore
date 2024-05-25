@@ -4,6 +4,99 @@ info:
   title: API V1
   version: v1
 paths:
+  "/cart_items":
+    post:
+      summary: Creates a cart_item
+      tags:
+      - CartItems
+      parameters: []
+      responses:
+        '201':
+          description: cart_item created
+        '422':
+          description: invalid request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cart_id:
+                  type: integer
+                item_id:
+                  type: integer
+                quantity:
+                  type: integer
+              required:
+              - cart_id
+              - item_id
+              - quantity
+  "/cart_items/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: ID of the cart_item
+      required: true
+      schema:
+        type: integer
+    put:
+      summary: Updates a cart_item
+      tags:
+      - CartItems
+      parameters: []
+      responses:
+        '204':
+          description: cart_item updated
+        '404':
+          description: cart_item not found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: integer
+              required:
+              - quantity
+    delete:
+      summary: Deletes a cart_item
+      tags:
+      - CartItems
+      responses:
+        '204':
+          description: cart_item deleted
+        '404':
+          description: cart_item not found
+  "/carts/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: ID of the cart
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Retrieves a cart
+      tags:
+      - Carts
+      responses:
+        '200':
+          description: cart found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  total:
+                    type: number
+                required:
+                - id
+                - total
+        '404':
+          description: cart not found
   "/items":
     get:
       summary: Retrieves all items

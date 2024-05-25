@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-RSpec.describe 'Items API', type: :request do
+RSpec.describe 'Items API', type: :request, swagger: true do
   path '/items' do
     get 'Retrieves all items' do
       tags 'Items'

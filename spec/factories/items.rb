@@ -1,6 +1,5 @@
 FactoryBot.define do
   factory :item do
-    id { 1 }
     name { 'Test Item' }
     item_type { 'Product' }
     stock { 10 }
