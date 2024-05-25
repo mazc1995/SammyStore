@@ -4,7 +4,7 @@ class CartItemsController < ApplicationController
   before_action :set_data, :find_item, :validate_stock!, only: %i[create update]
 
   def create
-    @cart_item = CartItem.create!(cart: @cart, item: @item, quantity: @quantity, subtotal: subtotal)
+    @cart_item = CartItem.create!(cart_item_params)
 
     render json: @cart_item, status: :created
   rescue StandardError
@@ -15,7 +15,7 @@ class CartItemsController < ApplicationController
     if @quantity.zero?
       @cart_item.destroy
     else
-      @cart_item.update!(subtotal: subtotal, quantity: @quantity)
+      @cart_item.update!(cart_item_params)
     end
     render json: @cart_item, status: :no_content
   rescue StandardError => e
@@ -65,5 +65,9 @@ class CartItemsController < ApplicationController
 
   def subtotal
     @item.price * @quantity
+  end
+
+  def cart_item_params
+    params.require(:cart_item).permit(:quantity, :subtotal, :cart_id, :item_id).merge(subtotal: subtotal)
   end
 end
