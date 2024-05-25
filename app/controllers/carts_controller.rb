@@ -1,16 +1,15 @@
 class CartsController < ApplicationController
-  def show
-    @cart = find_cart
-    raise StandardError, 'Cant find cart' unless @cart
+  before_action :find_cart, only: %i[show]
 
+  def show
     render json: @cart, status: :ok
-  rescue StandardError => e
-    render json: { error: e.message }, status: :not_found
   end
 
   private
 
   def find_cart
-    Cart.find_by(id: params[:id])
+    @cart = Cart.find(params[:id])
+  rescue StandardError => e
+    render json: { error: e.message }, status: :not_found
   end
 end

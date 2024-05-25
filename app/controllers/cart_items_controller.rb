@@ -1,38 +1,32 @@
 class CartItemsController < ApplicationController
   before_action :find_item, :find_cart, only: %i[create]
   before_action :find_cart_item, only: %i[update destroy]
-  before_action :set_data, only: %i[create update]
+  before_action :set_data, :find_item, :validate_stock!, only: %i[create update]
 
   def create
-    raise StandardError, :not_found unless @item && @cart
-    raise StandardError, :unprocessable_entity unless validate_stock! && validate_quantity!
+    @cart_item = CartItem.create!(cart: @cart, item: @item, quantity: @quantity, subtotal: subtotal)
 
-    @cart_item = CartItem.create(cart: @cart, item: @item, quantity: @quantity)
-    update_cart_item
     render json: @cart_item, status: :created
-  rescue StandardError => e
-    render json: { error: e.message }, status: e.message.to_sym
+  rescue StandardError
+    render json: @item.errors, status: :unprocessable_entity
   end
 
   def update
-    raise StandardError, :not_found unless @cart_item
-
-    @item = @cart_item.item
-    raise StandardError, :unprocessable_entity unless validate_stock! && validate_quantity!
-
-    update_cart_item
+    if @quantity.zero?
+      @cart_item.destroy
+    else
+      @cart_item.update!(subtotal: subtotal, quantity: @quantity)
+    end
     render json: @cart_item, status: :no_content
   rescue StandardError => e
-    render json: { error: e.message }, status: e.message.to_sym
+    render json: { error: e.message }, status: :unprocessable_entity
   end
 
   def destroy
-    raise StandardError, :not_found unless @cart_item
-
     @cart_item.destroy
     render json: @cart_item, status: :no_content
   rescue StandardError => e
-    render json: { error: e.message }, status: e.message.to_sym
+    render json: { error: e.message }, status: :unprocessable_entity
   end
 
   private
@@ -42,39 +36,34 @@ class CartItemsController < ApplicationController
   end
 
   def find_item
-    @item = Item.find_by(id: params['item_id'])
+    @item = if @cart_item
+              @cart_item.item
+            else
+              Item.find(params['item_id'])
+            end
+  rescue StandardError => e
+    render json: { error: e.message }, status: :not_found
   end
 
   def find_cart
-    @cart = Cart.find_by(id: params['cart_id'])
+    @cart = Cart.find(params['cart_id'])
+  rescue StandardError => e
+    render json: { error: e.message }, status: :not_found
   end
 
   def find_cart_item
-    @cart_item = CartItem.find_by(id: params['id'])
+    @cart_item = CartItem.find(params['id'])
+  rescue StandardError => e
+    render json: { error: e.message }, status: :not_found
   end
 
   def validate_stock!
-    @item.stock >= @quantity && @item.stock.positive?
+    raise StandardError, 'Not enough stock' unless @item.stock >= @quantity && @item.stock.positive?
+  rescue StandardError => e
+    render json: { error: e.message }, status: :unprocessable_entity
   end
 
-  def validate_quantity!
-    @quantity >= 0
-  end
-
-  def update_cart_item
-    if @quantity.zero?
-      @cart_item.destroy
-    else
-      subtotal = @item.price * @quantity
-      @cart_item.update(quantity: @quantity, subtotal: subtotal)
-    end
-  end
-
-  def update_cart
-    total = 0
-    @cart.cart_items.each do |item|
-      total += item.subtotal
-    end
-    @cart.update(total: total)
+  def subtotal
+    @item.price * @quantity
   end
 end

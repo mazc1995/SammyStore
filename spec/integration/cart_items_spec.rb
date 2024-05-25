@@ -69,6 +69,12 @@ RSpec.describe 'CartItems API', type: :request, swagger: true do
         end
       end
 
+      response '204', 'cart_item updated' do
+        let(:id) { cart_item.id }
+        let(:parameters) { { quantity: 0 } }
+        run_test!
+      end
+
       response '404', 'cart_item not found' do
         let(:id) { 'invalid' }
         let(:parameters) { { quantity: 2 } }
