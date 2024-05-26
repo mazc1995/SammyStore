@@ -7,8 +7,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: sammystore_development
-      POSTGRES_USER: sammystore
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
 
   web:
     build: .
@@ -20,7 +20,7 @@ services:
     depends_on:
       - db
     environment:
-      DATABASE_URL: postgres://sammystore:password@db:5432/sammystore_development
+      DATABASE_URL: postgres://postgres:admin@db:5432/sammystore_development
       RAILS_ENV: development
 
 volumes:

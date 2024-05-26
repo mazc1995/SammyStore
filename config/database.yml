@@ -17,12 +17,12 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  host: <%= ENV['DATABASE_HOST'] || 'db' %>
-  username: <%= ENV['DATABASE_USERNAME'] || 'sammystore' %>
-  password: <%= ENV['DATABASE_PASSWORD'] || 'password' %>
+  host: localhost
+  username: postgres
+  password: admin
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  pool: 5
 
 development:
   <<: *default
@@ -85,5 +85,5 @@ test:
 production:
   <<: *default
   database: SammyStore_production
-  username: SammyStore
-  password: <%= ENV['SAMMYSTORE_DATABASE_PASSWORD'] %>
+  username: postgres
+  password: admin

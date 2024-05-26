@@ -1,5 +1,5 @@
 # Dockerfile
-FROM ruby:3.0.2
+FROM ruby:3.3.1
 
 # Instalar dependencias necesarias
 RUN apt-get update -qq && apt-get install -y nodejs postgresql-client
