@@ -11,7 +11,7 @@ services:
       POSTGRES_PASSWORD: admin
 
   web:
-    build: .
+    image: marzam95/sammystore-web:latest
     command: bash -c "bundle exec rails db:create db:migrate db:seed && bundle exec rails s -b '0.0.0.0'"
     volumes:
       - .:/myapp

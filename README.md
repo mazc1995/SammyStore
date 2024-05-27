@@ -56,6 +56,18 @@ Run migrations and seeds to set up the database:
 
 ``` docker-compose run web bundle exec rails db:create db:migrate db:seed ```
 
+### Seed Data
+The following seed data is available by default:
+
+- Items
+    - Gafas de sol Carey: A product item with 100 in stock, priced at 39.99.
+    - Red Hot Chili Peppers en Madrid: An event item with 50 in stock, priced at 60.00.
+- Cart
+    - A cart with a total
+- CartItem
+    - 3 units of Gafas de sol Carey
+    - 5 units of Red Hot Chili Peppers en Madrid
+
 ### Usage
 Access the application in your browser at http://localhost:3000.
 
